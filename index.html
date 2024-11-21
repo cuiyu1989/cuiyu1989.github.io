@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Epee Clubs | 韩国重剑俱乐部</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #111827;
+            --secondary-color: #374151;
+            --background-color: #F9FAFB;
+            --card-background: white;
+            --text-color: #1F2937;
+            --border-color: #E5E7EB;
+            --hover-color: #F3F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .region-filter {
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            min-width: 150px;
+        }
+
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .club-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .club-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .club-name {
+            font-size: 1.3em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+        }
+
+        .address {
+            margin: 15px 0;
+        }
+
+        .address-kr {
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .address-cn {
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+
+        .phone {
+            margin-top: 20px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .stats {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .clubs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .region-filter {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>韩国重剑俱乐部 | Korean Epee Clubs</h1>
+            <div class="subtitle">한국 에페 펜싱클럽 정보</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="搜索俱乐部... | 클럽 검색..." id="searchInput">
+                <select class="region-filter" id="regionFilter">
+                    <option value="all">所有地区 | 전체지역</option>
+                    <option value="서울">首尔 | 서울</option>
+                    <option value="경기">京畿道 | 경기도</option>
+                    <option value="부산">釜山 | 부산</option>
+                    <option value="충남">忠清南道 | 충청남도</option>
+                    <option value="충북">忠清北道 | 충청북도</option>
+                    <option value="광주">光州 | 광주</option>
+                </select>
+            </div>
+        </section>
+
+        <div class="stats" id="searchStats">
+            显示全部俱乐部
+        </div>
+
+        <div class="clubs-grid" id="clubsGrid"></div>
+    </div>
+
+    <script>
+        // 俱乐部数据
+        const clubsData = [
+            {
+                name: "로얄펜싱클럽",
+                addressKr: "경기 안양시 동안구 경수대로 809 석림빌딩 5층",
+                addressCn: "京畿道安养市东安区庆水大路809号石林大厦5层",
+                phone: "031-455-0013",
+                region: "경기"
+            },
+            {
+                name: "비에이블펜싱클럽",
+                addressKr: "서울 강동구 아리수로93나길 76 501호",
+                addressCn: "首尔市江东区阿里水路93南路76号501室",
+                phone: "010-8076-5044",
+                region: "서울"
+            },
+            {
+                name: "신아람펜싱클럽",
+                addressKr: "서울 서초구 고무래로 22 B1",
+                addressCn: "首尔市瑞草区高武莱路22号地下1层",
+                phone: "0507-1323-8699",
+                region: "서울"
+            },
+            {
+                name: "부천 트윈펜싱클럽",
+                addressKr: "경기 부천시 원미구 조마루로285번길 50",
+                addressCn: "京畿道富川市原美区照马路285街50号",
+                phone: "0507-1481-2050",
+                region: "경기"
+            },
+            {
+                name: "윤남진펜싱클럽 서초점",
+                addressKr: "서울 서초구 서초중앙로24길 9",
+                addressCn: "首尔市瑞草区瑞草中央路24街9号",
+                phone: "0507-1307-7316",
+                region: "서울"
+            },
+            {
+                name: "윤남진펜싱클럽 대치점",
+                addressKr: "서울 강남구 선릉로63길 9 백림빌딩 4층",
+                addressCn: "首尔市江南区善陵路63街9号百林大厦4层",
+                phone: "0507-1309-7316",
+                region: "서울"
+            },
+            {
+                name: "드림펜싱클럽",
+                addressKr: "서울 송파구 올림픽로8길 23 드림펜싱클럽, 2층 A호",
+                addressCn: "首尔市松坡区奥林匹克路8街23号2层A号",
+                phone: "010-5391-5128",
+                region: "서울"
+            },
+            {
+                name: "수원펜싱클럽",
+                addressKr: "경기 수원시 영통구 덕영대로 1699 8층",
+                addressCn: "京畿道水原市灵通区德永大路1699号8层",
+                phone: "0507-1470-0716",
+                region: "경기"
+            },
+            {
+                name: "펜싱스튜디어더원",
+                addressKr: "서울 강동구 양재대로85길 29 지하1층",
+                addressCn: "首尔市江东区良才大路85街29号地下1层",
+                phone: "0507-1426-7528",
+                region: "서울"
+            },
+            {
+                name: "비앤케이펜싱클럽",
+                addressKr: "부산 수영구 광남로 31 비케이빌딩 8층",
+                addressCn: "釜山市水营区光南路31号BK大厦8层",
+                phone: "051-628-8899",
+                region: "부산"
+            },
+            {
+                name: "윈펜싱클럽",
+                addressKr: "부산 강서구 명지국제8로 234 9층 902호",
+                addressCn: "釜山市江西区明知国际8路234号9层902号",
+                phone: "0507-1395-3806",
+                region: "부산"
+            },
+            {
+                name: "제이콩펜싱클럽",
+                addressKr: "부산 강서구 명지국제1로 56-1 플러스타워 1004호",
+                addressCn: "釜山市江西区明知国际1路56-1号Plus大厦1004号",
+                phone: "0507-1308-8098",
+                region: "부산"
+            },
+            {
+                name: "레이스펜싱클럽",
+                addressKr: "서울 강서구 마곡중앙로 59-9 레이스펜싱클럽 (307, 308호)",
+                addressCn: "首尔市江西区麻谷中央路59-9号Race击剑俱乐部(307,308号)",
+                phone: "010-9879-6238",
+                region: "서울"
+            },
+            {
+                name: "은호펜싱클럽",
+                addressKr: "서울 서초구 방배로 165 지하1층",
+                addressCn: "首尔市瑞草区方背路165号地下1层",
+                phone: "02-595-6754",
+                region: "서울"
+            },
+            {
+               name: "베스트펜싱클럽",
+               addressKr: "서울 광진구 뚝섬로 545 상가동 2층 201호",
+               addressCn: "首尔市光振区纛岛路545号商铺楼2层201号",
+               phone: "0507-1405-1166",
+               region: "서울"
+            },
+            {
+               name: "퍼스트펜싱클럽",
+               addressKr: "충북 청주시 상당구 용암북로138번길 12 주1동 3층",
+               addressCn: "忠清北道清州市上党区龙岩北路138街12号住1栋3层",
+               phone: "0507-1351-0933",
+               region: "충북"
+            },
+            {
+               name: "광주국대펜싱",
+               addressKr: "광주 서구 치평로 106 지하1층 101호",
+               addressCn: "光州市西区治平路106号地下1层101号",
+               phone: "0507-1427-5868",
+               region: "광주"
+            },
+            {
+               name: "윤남진펜싱클럽 천안점",
+               addressKr: "충남 천안시 서북구 불당17길 27 그랜드프라자 2층",
+               addressCn: "忠清南道天安市西北区佛堂17街27号Grand Plaza 2层",
+               phone: "0507-1347-7316",
+               region: "충남"
+            },
+            {
+               name: "윤남진펜싱클럽 하남미사점",
+               addressKr: "경기 하남시 미사강변중앙로 220 11층 윤남진펜싱클럽",
+               addressCn: "京畿道河南市渼沙江边中央路220号11层",
+               phone: "0507-1385-7316",
+               region: "경기"
+            },
+            {
+               name: "이글펜싱클럽 송파점",
+               addressKr: "서울 송파구 마천로 27 B1층",
+               addressCn: "首尔市松坡区马川路27号地下1层",
+               phone: "0507-1482-8576",
+               region: "서울"
+            },
+            {
+               name: "오산오색문화체육센터",
+               addressKr: "경기 오산시 오산천로 271 3층 소체육관",
+               addressCn: "京畿道乌山市乌山川路271号3层小体育馆",
+               phone: "01072923789",
+               region: "경기"
+            }
+                           
+        ];
+
+        // 创建卡片的函数
+        function createClubCard(club) {
+            return `
+                <div class="club-card" data-region="${club.region}">
+                    <h2 class="club-name">${club.name}</h2>
+                    <div class="address">
+                        <p class="address-kr">${club.addressKr}</p>
+                        <p class="address-cn">${club.addressCn}</p>
+                    </div>
+                    <p class="phone">📞 ${club.phone}</p>
+                </div>
+            `;
+        }
+
+        // 显示俱乐部列表
+        function displayClubs(clubs) {
+            const clubsGrid = document.getElementById('clubsGrid');
+            clubsGrid.innerHTML = clubs.map(club => createClubCard(club)).join('');
+        }
+
+        // 搜索和筛选
+        function filterClubs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedRegion = document.getElementById('regionFilter').value;
+            
+            const filteredClubs = clubsData.filter(club => {
+                const matchesSearch = 
+                    club.name.toLowerCase().includes(searchTerm) ||
+                    club.addressKr.toLowerCase().includes(searchTerm) ||
+                    club.addressCn.includes(searchTerm);
+                
+                const matchesRegion = selectedRegion === 'all' || club.region === selectedRegion;
+                
+                return matchesSearch && matchesRegion;
+            });
+
+            displayClubs(filteredClubs);
+            updateStats(filteredClubs.length);
+        }
+
+        // 更新显示统计
+        function updateStats(count) {
+            const statsElement = document.getElementById('searchStats');
+            statsElement.textContent = `显示 ${count} 个俱乐部`;
+        }
+
+        // 页面加载完成后初始化
+        window.onload = function() {
+            displayClubs(clubsData);
+            document.getElementById('searchInput').addEventListener('input', filterClubs);
+            document.getElementById('regionFilter').addEventListener('change', filterClubs);
+            updateStats(clubsData.length);
+        };
+    </script>
+</body>
+</html>
