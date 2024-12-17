@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Korean Epee Clubs | 韩国重剑俱乐部</title>
+    <title>Fencing Clubs | 击剑俱乐部 | 펜싱클럽</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=159d506dd58766616e62d90c9fa1a058&libraries=services"></script>
     <style>
@@ -32,51 +32,77 @@
             line-height: 1.6;
             background-color: var(--background-color);
             color: var(--text-color);
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* 语言切换按钮 */
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .lang-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .lang-btn.active {
+            background: var(--success-color);
+        }
+
+        /* 头部样式 */
         header {
             background: var(--primary-color);
             color: white;
             padding: 40px 0;
             margin-bottom: 30px;
+            text-align: center;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-            text-align: center;
         }
 
         .header-content h1 {
             font-size: 2.2em;
             margin-bottom: 10px;
-            font-weight: 700;
         }
 
-        .header-content .subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
+        /* 搜索区域 */
         .search-section {
-            background: white;
+            max-width: 1200px;
+            margin: 0 auto 30px;
             padding: 20px;
+            background: white;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
         }
 
         .search-container {
             display: flex;
             gap: 15px;
-            margin-bottom: 15px;
         }
 
         .search-box {
@@ -86,20 +112,37 @@
             border-radius: 6px;
             font-size: 1em;
             outline: none;
+            transition: border-color 0.3s ease;
         }
 
-        .region-filter {
+        .search-box:focus {
+            border-color: var(--success-color);
+        }
+
+        .region-select {
             padding: 12px 20px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             background: white;
             min-width: 150px;
+            cursor: pointer;
         }
 
-        .clubs-grid {
+        /* 搜索结果统计 */
+        .stats {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+
+        /* 俱乐部卡片网格 */
+        .club-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .club-card {
@@ -125,50 +168,33 @@
             font-weight: 700;
         }
 
-        .address {
-            margin: 15px 0;
-        }
-
-        .address-kr {
-            color: var(--text-color);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .address-cn {
-            color: var(--secondary-color);
-            margin-bottom: 8px;
-        }
-
-        .phone {
-            margin-top: 20px;
-            color: var(--primary-color);
-            font-weight: 500;
-        }
-
-        .stats {
-            text-align: center;
+        .club-info {
             margin-bottom: 20px;
+        }
+
+        .club-address, .club-phone {
+            margin-bottom: 8px;
             color: var(--secondary-color);
         }
 
-        .map-button {
-            background-color: var(--success-color);
+        .map-btn {
+            background: var(--success-color);
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
             border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9em;
-            margin-top: 15px;
             width: 100%;
             transition: background-color 0.2s ease;
+            font-size: 0.95em;
+            font-weight: 500;
         }
 
-        .map-button:hover {
-            background-color: var(--success-hover-color);
+        .map-btn:hover {
+            background: var(--success-hover-color);
         }
 
+        /* 地图模态框 */
         #mapModal {
             display: none;
             position: fixed;
@@ -176,7 +202,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
         }
 
@@ -187,10 +213,10 @@
             transform: translate(-50%, -50%);
             width: 80%;
             height: 80%;
-            background-color: white;
+            background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         #kakaoMap {
@@ -199,12 +225,12 @@
             border-radius: 4px;
         }
 
-        .close-map {
+        .close-btn {
             position: absolute;
             top: 10px;
             right: 10px;
-            padding: 8px 12px;
-            background-color: var(--danger-color);
+            padding: 8px 16px;
+            background: var(--danger-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -212,328 +238,665 @@
             transition: background-color 0.2s ease;
         }
 
-        .close-map:hover {
-            background-color: var(--danger-hover-color);
+        .close-btn:hover {
+            background: var(--danger-hover-color);
         }
 
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            .clubs-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .search-container {
                 flex-direction: column;
             }
-            
-            .region-filter {
+
+            .region-select {
                 width: 100%;
             }
+
+            .club-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            .header-content h1 {
+                font-size: 1.8em;
+            }
+
+            .map-container {
+                width: 95%;
+                height: 90%;
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            color: var(--secondary-color);
+            font-size: 1.1em;
         }
     </style>
 </head>
 <body>
+    <div class="language-switch">
+        <button class="lang-btn active" data-lang="ko">한국어</button>
+        <button class="lang-btn" data-lang="cn">中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+
     <header>
         <div class="header-content">
-            <h1>韩国重剑俱乐部 | Korean Epee Clubs</h1>
-            <div class="subtitle">한국 에페 펜싱클럽 정보</div>
+            <h1 class="translate" data-key="title">Korean Epee Clubs</h1>
+            <div class="subtitle translate" data-key="subtitle">Find Your Fencing Club</div>
         </div>
     </header>
 
-    <div class="container">
-        <section class="search-section">
-            <div class="search-container">
-                <input type="text" class="search-box" placeholder="搜索俱乐部... | 클럽 검색..." id="searchInput">
-                <select class="region-filter" id="regionFilter">
-                    <option value="all">所有地区 | 전체지역</option>
-                    <option value="서울">首尔 | 서울</option>
-                    <option value="경기">京畿道 | 경기도</option>
-                    <option value="부산">釜山 | 부산</option>
-                    <option value="충남">忠清南道 | 충청남도</option>
-                    <option value="충북">忠清北道 | 충청북도</option>
-                    <option value="광주">光州 | 광주</option>
-                </select>
-            </div>
-        </section>
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="">
+            <select class="region-select"></select>
+        </div>
+    </div>
 
-        <div class="stats" id="searchStats">显示全部俱乐部</div>
-        <div class="clubs-grid" id="clubsGrid"></div>
+    <div class="stats"></div>
+    <div class="club-grid" id="clubGrid"></div>
 
-        <div id="mapModal">
-            <div class="map-container">
-                <div id="kakaoMap"></div>
-                <button class="close-map" onclick="closeMap()">닫기</button>
-            </div>
+    <div id="mapModal">
+        <div class="map-container">
+            <div id="kakaoMap"></div>
+            <button class="close-btn translate" data-key="close">Close</button>
         </div>
     </div>
     <script>
         // 俱乐部数据
-        const clubsData = [
-            {
-                name: "로얄펜싱클럽",
-                addressKr: "경기 안양시 동안구 경수대로 809 석림빌딩 5층",
-                addressCn: "京畿道安养市东安区庆水大路809号石林大厦5层",
-                phone: "031-455-0013",
-                region: "경기"
-            },
-            {
-                name: "비에이블펜싱클럽",
-                addressKr: "서울 강동구 아리수로93나길 76 501호",
-                addressCn: "首尔市江东区阿里水路93南路76号501室",
-                phone: "010-8076-5044",
-                region: "서울"
-            },
-            {
-                name: "신아람펜싱클럽",
-                addressKr: "서울 서초구 고무래로 22 B1",
-                addressCn: "首尔市瑞草区高武莱路22号地下1层",
-                phone: "0507-1323-8699",
-                region: "서울"
-            },
-            {
-                name: "부천 트윈펜싱클럽",
-                addressKr: "경기 부천시 원미구 조마루로285번길 50",
-                addressCn: "京畿道富川市原美区照马路285街50号",
-                phone: "0507-1481-2050",
-                region: "경기"
-            },
-            {
-                name: "윤남진펜싱클럽 서초점",
-                addressKr: "서울 서초구 서초중앙로24길 9",
-                addressCn: "首尔市瑞草区瑞草中央路24街9号",
-                phone: "0507-1307-7316",
-                region: "서울"
-            },
-            {
-                name: "윤남진펜싱클럽 대치점",
-                addressKr: "서울 강남구 선릉로63길 9 백림빌딩 4층",
-                addressCn: "首尔市江南区善陵路63街9号百林大厦4层",
-                phone: "0507-1309-7316",
-                region: "서울"
-            },
-            {
-                name: "드림펜싱클럽",
-                addressKr: "서울 송파구 올림픽로8길 23 드림펜싱클럽, 2층 A호",
-                addressCn: "首尔市松坡区奥林匹克路8街23号2层A号",
-                phone: "010-5391-5128",
-                region: "서울"
-            },
-            {
-                name: "수원펜싱클럽",
-                addressKr: "경기 수원시 영통구 덕영대로 1699 8층",
-                addressCn: "京畿道水原市灵通区德永大路1699号8层",
-                phone: "0507-1470-0716",
-                region: "경기"
-            },
-            {
-                name: "펜싱스튜디어더원",
-                addressKr: "서울 강동구 양재대로85길 29 지하1층",
-                addressCn: "首尔市江东区良才大路85街29号地下1层",
-                phone: "0507-1426-7528",
-                region: "서울"
-            },
-            {
-                name: "비앤케이펜싱클럽",
-                addressKr: "부산 수영구 광남로 31 비케이빌딩 8층",
-                addressCn: "釜山市水营区光南路31号BK大厦8层",
-                phone: "051-628-8899",
-                region: "부산"
-            },
-            {
-                name: "윈펜싱클럽",
-                addressKr: "부산 강서구 명지국제8로 234 9층 902호",
-                addressCn: "釜山市江西区明知国际8路234号9层902号",
-                phone: "0507-1395-3806",
-                region: "부산"
-            },
-            {
-                name: "제이콩펜싱클럽",
-                addressKr: "부산 강서구 명지국제1로 56-1 플러스타워 1004호",
-                addressCn: "釜山市江西区明知国际1路56-1号Plus大厦1004号",
-                phone: "0507-1308-8098",
-                region: "부산"
-            },
-            {
-                name: "레이스펜싱클럽",
-                addressKr: "서울 강서구 마곡중앙로 59-9 레이스펜싱클럽 (307, 308호)",
-                addressCn: "首尔市江西区麻谷中央路59-9号Race击剑俱乐部(307,308号)",
-                phone: "010-9879-6238",
-                region: "서울"
-            },
-            {
-                name: "은호펜싱클럽",
-                addressKr: "서울 서초구 방배로 165 지하1층",
-                addressCn: "首尔市瑞草区方背路165号地下1层",
-                phone: "02-595-6754",
-                region: "서울"
-            },
-            {
-               name: "베스트펜싱클럽",
-               addressKr: "서울 광진구 뚝섬로 545 상가동 2층 201호",
-               addressCn: "首尔市光振区纛岛路545号商铺楼2层201号",
-               phone: "0507-1405-1166",
-               region: "서울"
-            },
-            {
-               name: "퍼스트펜싱클럽",
-               addressKr: "충북 청주시 상당구 용암북로138번길 12 주1동 3층",
-               addressCn: "忠清北道清州市上党区龙岩北路138街12号住1栋3层",
-               phone: "0507-1351-0933",
-               region: "충북"
-            },
-            {
-               name: "광주국대펜싱",
-               addressKr: "광주 서구 치평로 106 지하1층 101호",
-               addressCn: "光州市西区治平路106号地下1层101号",
-               phone: "0507-1427-5868",
-               region: "광주"
-            },
-            {
-               name: "윤남진펜싱클럽 천안점",
-               addressKr: "충남 천안시 서북구 불당17길 27 그랜드프라자 2층",
-               addressCn: "忠清南道天安市西北区佛堂17街27号Grand Plaza 2层",
-               phone: "0507-1347-7316",
-               region: "충남"
-            },
-            {
-               name: "윤남진펜싱클럽 하남미사점",
-               addressKr: "경기 하남시 미사강변중앙로 220 11층 윤남진펜싱클럽",
-               addressCn: "京畿道河南市渼沙江边中央路220号11层",
-               phone: "0507-1385-7316",
-               region: "경기"
-            },
-            {
-               name: "이글펜싱클럽 송파점",
-               addressKr: "서울 송파구 마천로 27 B1층",
-               addressCn: "首尔市松坡区马川路27号地下1层",
-               phone: "0507-1482-8576",
-               region: "서울"
-            },
-            {
-               name: "오산오색문화체육센터 강습",
-               addressKr: "경기 오산시 오산천로 271 3층 소체육관",
-               addressCn: "京畿道乌山市乌山川路271号3层小体育馆",
-               phone: "01072923789",
-               region: "경기"
+        const clubs = [
+    {
+        id: "royal",
+        name: {
+            ko: "로얄펜싱클럽",
+            cn: "皇家击剑俱乐部",
+            en: "Royal Fencing Club"
+        },
+        address: {
+            ko: "경기 안양시 동안구 경수대로 809 석림빌딩 5층",
+            cn: "京畿道安养市东安区庆水大路809号石林大厦5层",
+            en: "5F, Seokrim Building, 809 Gyeongsu-daero, Dongan-gu, Anyang-si"
+        },
+        phone: "031-455-0013",
+        coords: {lat: 37.3828, lng: 126.9545},
+        region: "gyeonggi"
+    },
+    {
+        id: "beable",
+        name: {
+            ko: "비에이블펜싱클럽",
+            cn: "BE ABLE击剑俱乐部",
+            en: "BE ABLE Fencing Club"
+        },
+        address: {
+            ko: "서울 강동구 아리수로93나길 76 501호",
+            cn: "首尔市江东区阿里水路93南路76号501室",
+            en: "Room 501, 76 Arisu-ro 93na-gil, Gangdong-gu, Seoul"
+        },
+        phone: "010-8076-5044",
+        coords: {lat: 37.5450, lng: 127.1352},
+        region: "seoul"
+    },
+    {
+        id: "shinahram",
+        name: {
+            ko: "신아람펜싱클럽",
+            cn: "申雅兰击剑俱乐部",
+            en: "Shin A-Lam Fencing Club"
+        },
+        address: {
+            ko: "서울 서초구 고무래로 22 B1",
+            cn: "首尔市瑞草区高武莱路22号地下1层",
+            en: "B1, 22 Gomurae-ro, Seocho-gu, Seoul"
+        },
+        phone: "0507-1323-8699",
+        coords: {lat: 37.4838, lng: 127.0158},
+        region: "seoul"
+    },
+    {
+        id: "twin",
+        name: {
+            ko: "부천 트윈펜싱클럽",
+            cn: "富川双子击剑俱乐部",
+            en: "Bucheon Twin Fencing Club"
+        },
+        address: {
+            ko: "경기 부천시 원미구 조마루로285번길 50",
+            cn: "京畿道富川市原美区照马路285街50号",
+            en: "50, Jomaru-ro 285beon-gil, Wonmi-gu, Bucheon-si"
+        },
+        phone: "0507-1481-2050",
+        coords: {lat: 37.4984, lng: 126.7831},
+        region: "gyeonggi"
+    },
+    {
+        id: "yoon-seocho",
+        name: {
+            ko: "윤남진펜싱클럽 서초점",
+            cn: "尹南镇击剑俱乐部瑞草店",
+            en: "Yoon Nam-jin Fencing Club Seocho Branch"
+        },
+        address: {
+            ko: "서울 서초구 서초중앙로24길 9",
+            cn: "首尔市瑞草区瑞草中央路24街9号",
+            en: "9, Seocho-jungang-ro 24-gil, Seocho-gu, Seoul"
+        },
+        phone: "0507-1307-7316",
+        coords: {lat: 37.4889, lng: 127.0167},
+        region: "seoul"
+    },
+    {
+        id: "yoon-daechi",
+        name: {
+            ko: "윤남진펜싱클럽 대치점",
+            cn: "尹南镇击剑俱乐部大治店",
+            en: "Yoon Nam-jin Fencing Club Daechi Branch"
+        },
+        address: {
+            ko: "서울 강남구 선릉로63길 9 백림빌딩 4층",
+            cn: "首尔市江南区善陵路63街9号百林大厦4层",
+            en: "4F, Baekrim Building, 9, Seolleung-ro 63-gil, Gangnam-gu, Seoul"
+        },
+        phone: "0507-1309-7316",
+        coords: {lat: 37.5006, lng: 127.0530},
+        region: "seoul"
+    },
+    {
+        id: "dream",
+        name: {
+            ko: "드림펜싱클럽",
+            cn: "梦想击剑俱乐部",
+            en: "Dream Fencing Club"
+        },
+        address: {
+            ko: "서울 송파구 올림픽로8길 23 드림펜싱클럽, 2층 A호",
+            cn: "首尔市松坡区奥林匹克路8街23号2层A号",
+            en: "Unit A, 2F, 23, Olympic-ro 8-gil, Songpa-gu, Seoul"
+        },
+        phone: "010-5391-5128",
+        coords: {lat: 37.5115, lng: 127.0793},
+        region: "seoul"
+    },
+    {
+        id: "suwon",
+        name: {
+            ko: "수원펜싱클럽",
+            cn: "水原击剑俱乐部",
+            en: "Suwon Fencing Club"
+        },
+        address: {
+            ko: "경기 수원시 영통구 덕영대로 1699 8층",
+            cn: "京畿道水原市灵通区德永大路1699号8层",
+            en: "8F, 1699, Deogyeong-daero, Yeongtong-gu, Suwon-si"
+        },
+        phone: "0507-1470-0716",
+        coords: {lat: 37.2501, lng: 127.0766},
+        region: "gyeonggi"
+    },
+    {
+        id: "theone",
+        name: {
+            ko: "펜싱스튜디어더원",
+            cn: "击剑工作室一号",
+            en: "Fencing Studio The One"
+        },
+        address: {
+            ko: "서울 강동구 양재대로85길 29 지하1층",
+            cn: "首尔市江东区良才大路85街29号地下1层",
+            en: "B1, 29, Yangjae-daero 85-gil, Gangdong-gu, Seoul"
+        },
+        phone: "0507-1426-7528",
+        coords: {lat: 37.5307, lng: 127.1445},
+        region: "seoul"
+    },
+    {
+        id: "bnk",
+        name: {
+            ko: "비앤케이펜싱클럽",
+            cn: "B&K击剑俱乐部",
+            en: "B&K Fencing Club"
+        },
+        address: {
+            ko: "부산 수영구 광남로 31 비케이빌딩 8층",
+            cn: "釜山市水营区光南路31号BK大厦8层",
+            en: "8F, BK Building, 31, Gwangnam-ro, Suyeong-gu, Busan"
+        },
+        phone: "051-628-8899",
+        coords: {lat: 35.1657, lng: 129.1127},
+        region: "busan"
+    },
+    {
+        
+        id: "win",
+        name: {
+            ko: "윈펜싱클럽",
+            cn: "WIN击剑俱乐部",
+            en: "Win Fencing Club"
+        },
+        address: {
+            ko: "부산 강서구 명지국제8로 234 9층 902호",
+            cn: "釜山市江西区明知国际8路234号9层902号",
+            en: "Room 902, 9F, 234, Myeongji-international 8-ro, Gangseo-gu, Busan"
+        },
+        phone: "0507-1395-3806",
+        coords: {lat: 35.0941, lng: 128.9301},
+        region: "busan"
+    },
+    {
+        id: "jkong",
+        name: {
+            ko: "제이콩펜싱클럽",
+            cn: "J.Kong击剑俱乐部",
+            en: "J.Kong Fencing Club"
+        },
+        address: {
+            ko: "부산 강서구 명지국제1로 56-1 플러스타워 1004호",
+            cn: "釜山市江西区明知国际1路56-1号Plus大厦1004号",
+            en: "Room 1004, Plus Tower, 56-1, Myeongji-international 1-ro, Gangseo-gu, Busan"
+        },
+        phone: "0507-1308-8098",
+        coords: {lat: 35.0938, lng: 128.9297},
+        region: "busan"
+    },
+    {
+        id: "race",
+        name: {
+            ko: "레이스펜싱클럽",
+            cn: "Race击剑俱乐部",
+            en: "Race Fencing Club"
+        },
+        address: {
+            ko: "서울 강서구 마곡중앙로 59-9 레이스펜싱클럽 (307, 308호)",
+            cn: "首尔市江西区麻谷中央路59-9号Race击剑俱乐部(307,308号)",
+            en: "Unit 307-308, 59-9, Magok-jungang-ro, Gangseo-gu, Seoul"
+        },
+        phone: "010-9879-6238",
+        coords: {lat: 37.5605, lng: 126.8253},
+        region: "seoul"
+    },
+    {
+        id: "eunho",
+        name: {
+            ko: "은호펜싱클럽",
+            cn: "银虎击剑俱乐部",
+            en: "Eunho Fencing Club"
+        },
+        address: {
+            ko: "서울 서초구 방배로 165 지하1층",
+            cn: "首尔市瑞草区方背路165号地下1层",
+            en: "B1, 165, Bangbae-ro, Seocho-gu, Seoul"
+        },
+        phone: "02-595-6754",
+        coords: {lat: 37.4841, lng: 126.9851},
+        region: "seoul"
+    },
+    {
+        id: "best",
+        name: {
+            ko: "베스트펜싱클럽",
+            cn: "最佳击剑俱乐部",
+            en: "Best Fencing Club"
+        },
+        address: {
+            ko: "서울 광진구 뚝섬로 545 상가동 2층 201호",
+            cn: "首尔市光振区纛岛路545号商铺楼2层201号",
+            en: "Unit 201, 2F, 545, Ttukseom-ro, Gwangjin-gu, Seoul"
+        },
+        phone: "0507-1405-1166",
+        coords: {lat: 37.5445, lng: 127.0876},
+        region: "seoul"
+    },
+    {
+        id: "first",
+        name: {
+            ko: "퍼스트펜싱클럽",
+            cn: "第一击剑俱乐部",
+            en: "First Fencing Club"
+        },
+        address: {
+            ko: "충북 청주시 상당구 용암북로138번길 12 주1동 3층",
+            cn: "忠清北道清州市上党区龙岩北路138街12号住1栋3层",
+            en: "3F, Building 1, 12, Yongam-bukro 138beon-gil, Sangdang-gu, Cheongju-si"
+        },
+        phone: "0507-1351-0933",
+        coords: {lat: 36.6066, lng: 127.4959},
+        region: "chungbuk"
+    },
+    {
+        id: "gwangju-national",
+        name: {
+            ko: "광주국대펜싱",
+            cn: "光州国家队击剑俱乐部",
+            en: "Gwangju National Fencing Club"
+        },
+        address: {
+            ko: "광주 서구 치평로 106 지하1층 101호",
+            cn: "光州市西区治平路106号地下1层101号",
+            en: "B1-101, 106, Chipyeong-ro, Seo-gu, Gwangju"
+        },
+        phone: "0507-1427-5868",
+        coords: {lat: 35.1534, lng: 126.8516},
+        region: "gwangju"
+    },
+    {
+        id: "yoon-cheonan",
+        name: {
+            ko: "윤남진펜싱클럽 천안점",
+            cn: "尹南镇击剑俱乐部天安店",
+            en: "Yoon Nam-jin Fencing Club Cheonan Branch"
+        },
+        address: {
+            ko: "충남 천안시 서북구 불당17길 27 그랜드프라자 2층",
+            cn: "忠清南道天安市西北区佛堂17街27号Grand Plaza 2层",
+            en: "2F, Grand Plaza, 27, Buldang 17-gil, Seobuk-gu, Cheonan-si"
+        },
+        phone: "0507-1347-7316",
+        coords: {lat: 36.8019, lng: 127.1112},
+        region: "chungnam"
+    },
+    {
+        id: "yoon-hanam",
+        name: {
+            ko: "윤남진펜싱클럽 하남미사점",
+            cn: "尹南镇击剑俱乐部河南渼沙店",
+            en: "Yoon Nam-jin Fencing Club Hanam Misa Branch"
+        },
+        address: {
+            ko: "경기 하남시 미사강변중앙로 220 11층",
+            cn: "京畿道河南市渼沙江边中央路220号11层",
+            en: "11F, 220, Misagangbyeon-jungangro, Hanam-si"
+        },
+        phone: "0507-1385-7316",
+        coords: {lat: 37.5656, lng: 127.1956},
+        region: "gyeonggi"
+    },
+    {
+        id: "eagle-songpa",
+        name: {
+            ko: "이글펜싱클럽 송파점",
+            cn: "鹰击剑俱乐部松坡店",
+            en: "Eagle Fencing Club Songpa Branch"
+        },
+        address: {
+            ko: "서울 송파구 마천로 27 B1층",
+            cn: "首尔市松坡区马川路27号地下1层",
+            en: "B1, 27, Macheon-ro, Songpa-gu, Seoul"
+        },
+        phone: "0507-1482-8576",
+        coords: {lat: 37.4989, lng: 127.1452},
+        region: "seoul"
+    },
+    {
+        id: "osan",
+        name: {
+            ko: "오산오색문화체육센터 강습",
+            cn: "乌山五色文化体育中心击剑课程",
+            en: "Osan Five Colors Cultural Sports Center Fencing"
+        },
+        address: {
+            ko: "경기 오산시 오산천로 271 3층 소체육관",
+            cn: "京畿道乌山市乌山川路271号3层小体育馆",
+            en: "Small Gym, 3F, 271, Osancheon-ro, Osan-si"
+        },
+        phone: "01072923789",
+        coords: {lat: 37.1507, lng: 127.0770},
+        region: "gyeonggi"
+    }
+];
+const translations = {
+    ko: {
+        title: "한국 에페 펜싱클럽",
+        subtitle: "펜싱클럽 찾기",
+        searchPlaceholder: "클럽 검색...",
+        allRegions: "전체지역",
+        viewMap: "위치보기",
+        close: "닫기",
+        phone: "전화",
+        address: "주소",
+        noResults: "검색 결과가 없습니다",
+        showingResults: "총 {count}개의 클럽"
+    },
+    cn: {
+        title: "韩国重剑俱乐部",
+        subtitle: "查找击剑俱乐部",
+        searchPlaceholder: "搜索俱乐部...",
+        allRegions: "所有地区",
+        viewMap: "查看位置",
+        close: "关闭",
+        phone: "电话",
+        address: "地址",
+        noResults: "没有找到相关结果",
+        showingResults: "共找到 {count} 个俱乐部"
+    },
+    en: {
+        title: "Korean Epee Clubs",
+        subtitle: "Find Your Fencing Club",
+        searchPlaceholder: "Search clubs...",
+        allRegions: "All Regions",
+        viewMap: "View Location",
+        close: "Close",
+        phone: "Phone",
+        address: "Address",
+        noResults: "No results found",
+        showingResults: "Found {count} clubs"
+    }
+};
+
+// 区域数据
+const regions = {
+    seoul: {
+        ko: "서울",
+        cn: "首尔",
+        en: "Seoul"
+    },
+    gyeonggi: {
+        ko: "경기",
+        cn: "京畿道",
+        en: "Gyeonggi"
+    },
+    busan: {
+        ko: "부산",
+        cn: "釜山",
+        en: "Busan"
+    },
+    chungnam: {
+        ko: "충남",
+        cn: "忠清南道",
+        en: "Chungnam"
+    },
+    chungbuk: {
+        ko: "충북",
+        cn: "忠清北道",
+        en: "Chungbuk"
+    },
+    gwangju: {
+        ko: "광주",
+        cn: "光州",
+        en: "Gwangju"
+    }
+};
+class ClubManager {
+    constructor() {
+        this.currentLang = 'ko';
+        this.filteredClubs = clubs;
+        this.map = null;
+        this.currentMarker = null;
+        this.infoWindow = null;
+        this.initializeUI();
+        this.addEventListeners();
+    }
+
+    initializeUI() {
+        this.translateUI();
+        this.updateRegionFilter();
+        this.updateSearchPlaceholder();
+        this.displayClubs();
+        this.updateStats();
+    }
+
+    translateUI() {
+        document.querySelectorAll('.translate').forEach(el => {
+            const key = el.dataset.key;
+            if (translations[this.currentLang][key]) {
+                el.textContent = translations[this.currentLang][key];
             }
-                           
-        ];
-        let map = null;
-let markers = [];
-let activeInfoWindow = null;
-
-function initMap(lat, lng) {
-    if (!map) {
-        const container = document.getElementById('kakaoMap');
-        const options = {
-            center: new kakao.maps.LatLng(lat, lng),
-            level: 3
-        };
-        map = new kakao.maps.Map(container, options);
+        });
     }
-    return map;
-}
 
-function clearMapObjects() {
-    markers.forEach(marker => marker.setMap(null));
-    markers = [];
-    if (activeInfoWindow) {
-        activeInfoWindow.close();
-        activeInfoWindow = null;
+    updateSearchPlaceholder() {
+        const searchBox = document.querySelector('.search-box');
+        searchBox.placeholder = translations[this.currentLang].searchPlaceholder;
     }
-}
 
-function showMap(address, name) {
-    document.getElementById('mapModal').style.display = 'block';
-    const geocoder = new kakao.maps.services.Geocoder();
-    
-    geocoder.addressSearch(address, function(result, status) {
-        if (status === kakao.maps.services.Status.OK) {
-            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-            const currentMap = initMap(result[0].y, result[0].x);
-            
-            clearMapObjects();
-            
-            const marker = new kakao.maps.Marker({
-                map: currentMap,
-                position: coords
-            });
-            
-            markers.push(marker);
-            
-            const infowindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:5px;font-size:12px;">${name}</div>`
-            });
-            
-            kakao.maps.event.addListener(marker, 'click', function() {
-                if (activeInfoWindow) activeInfoWindow.close();
-                infowindow.open(currentMap, marker);
-                activeInfoWindow = infowindow;
-            });
-            
-            currentMap.setCenter(coords);
-        } else {
-            alert('주소를 찾을 수 없습니다.');
-        }
-    });
-}
-        function createClubCard(club) {
-            return `
-                <div class="club-card" data-region="${club.region}">
-                    <h2 class="club-name">${club.name}</h2>
-                    <div class="address">
-                        <p class="address-kr">${club.addressKr}</p>
-                        <p class="address-cn">${club.addressCn}</p>
-                    </div>
-                    <p class="phone">📞 ${club.phone}</p>
-                    <button class="map-button" onclick="showMap('${club.addressKr}', '${club.name}')">
-                        위치보기
-                    </button>
+    updateRegionFilter() {
+        const regionSelect = document.querySelector('.region-select');
+        const currentRegion = regionSelect.value;
+        regionSelect.innerHTML = `
+            <option value="all">${translations[this.currentLang].allRegions}</option>
+            ${Object.entries(regions).map(([code, names]) => 
+                `<option value="${code}" ${currentRegion === code ? 'selected' : ''}>
+                    ${names[this.currentLang]}
+                </option>`
+            ).join('')}
+        `;
+    }
+
+    updateStats() {
+        const stats = document.querySelector('.stats');
+        stats.textContent = translations[this.currentLang].showingResults
+            .replace('{count}', this.filteredClubs.length);
+    }
+
+    displayClubs() {
+        const grid = document.getElementById('clubGrid');
+        if (this.filteredClubs.length === 0) {
+            grid.innerHTML = `
+                <div class="no-results">
+                    ${translations[this.currentLang].noResults}
                 </div>
             `;
+        } else {
+            grid.innerHTML = this.filteredClubs.map(club => this.createClubCard(club)).join('');
         }
-
-        function displayClubs(clubs) {
-            const clubsGrid = document.getElementById('clubsGrid');
-            clubsGrid.innerHTML = clubs.map(club => createClubCard(club)).join('');
-        }
-
-        function filterClubs() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const selectedRegion = document.getElementById('regionFilter').value;
-            
-            const filteredClubs = clubsData.filter(club => {
-                const matchesSearch = 
-                    club.name.toLowerCase().includes(searchTerm) ||
-                    club.addressKr.toLowerCase().includes(searchTerm) ||
-                    club.addressCn.includes(searchTerm);
-                
-                const matchesRegion = selectedRegion === 'all' || club.region === selectedRegion;
-                
-                return matchesSearch && matchesRegion;
-            });
-
-            displayClubs(filteredClubs);
-            updateStats(filteredClubs.length);
-        }
-
-        function updateStats(count) {
-            const statsElement = document.getElementById('searchStats');
-            statsElement.textContent = `显示 ${count} 个俱乐部`;
-        }
-        function closeMap() {
-    document.getElementById('mapModal').style.display = 'none';
-}
-        window.onload = function() {
-    if (!window.kakao || !window.kakao.maps) {
-        console.error('Kakao Maps API failed to load');
-        alert('지도 서비스를 일시적으로 사용할 수 없습니다.');
-        return;
+        this.updateStats();
     }
-    displayClubs(clubsData);
-    document.getElementById('searchInput').addEventListener('input', filterClubs);
-    document.getElementById('regionFilter').addEventListener('change', filterClubs);
-    updateStats(clubsData.length);
-};
-    </script>
+
+    createClubCard(club) {
+        return `
+            <div class="club-card">
+                <div class="club-name">${club.name[this.currentLang]}</div>
+                <div class="club-info">
+                    <div class="club-address">
+                        <strong>${translations[this.currentLang].address}:</strong> 
+                        ${club.address[this.currentLang]}
+                    </div>
+                    <div class="club-phone">
+                        <strong>${translations[this.currentLang].phone}:</strong> 
+                        ${club.phone}
+                    </div>
+                </div>
+                <button class="map-btn" onclick="clubManager.showMap('${club.id}')">
+                    ${translations[this.currentLang].viewMap}
+                </button>
+            </div>
+        `;
+    }
+
+    showMap(clubId) {
+        const club = clubs.find(c => c.id === clubId);
+        if (!club) return;
+
+        const modal = document.getElementById('mapModal');
+        modal.style.display = 'block';
+        
+        if (!this.map) {
+            this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
+                center: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
+                level: 3
+            });
+        }
+        
+        // 设置地图中心
+        this.map.setCenter(new kakao.maps.LatLng(club.coords.lat, club.coords.lng));
+
+        // 清除之前的标记
+        if (this.currentMarker) {
+            this.currentMarker.setMap(null);
+        }
+
+        // 添加新标记
+        this.currentMarker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
+            map: this.map
+        });
+
+        // 添加信息窗口
+        if (this.infoWindow) {
+            this.infoWindow.close();
+        }
+
+        this.infoWindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:10px;text-align:center;">${club.name[this.currentLang]}</div>`
+        });
+        this.infoWindow.open(this.map, this.currentMarker);
+    }
+
+    closeMap() {
+        const modal = document.getElementById('mapModal');
+        modal.style.display = 'none';
+        if (this.infoWindow) {
+            this.infoWindow.close();
+        }
+    }
+
+    filterClubs() {
+        const searchTerm = document.querySelector('.search-box').value.toLowerCase();
+        const selectedRegion = document.querySelector('.region-select').value;
+
+        this.filteredClubs = clubs.filter(club => {
+            const matchesSearch = searchTerm === '' || 
+                club.name[this.currentLang].toLowerCase().includes(searchTerm) ||
+                club.address[this.currentLang].toLowerCase().includes(searchTerm);
+
+            const matchesRegion = selectedRegion === 'all' || club.region === selectedRegion;
+
+            return matchesSearch && matchesRegion;
+        });
+
+        this.displayClubs();
+    }
+
+    addEventListeners() {
+        // 语言切换
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.currentLang = btn.dataset.lang;
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.initializeUI();
+            });
+        });
+
+        // 搜索和筛选
+        document.querySelector('.search-box').addEventListener('input', () => this.filterClubs());
+        document.querySelector('.region-select').addEventListener('change', () => this.filterClubs());
+
+        // 关闭地图
+        document.querySelector('.close-btn').addEventListener('click', () => this.closeMap());
+
+        // ESC键关闭地图
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeMap();
+            }
+        });
+    }
+}
+        const clubManager = new ClubManager();
+     </script>
 </body>
 </html>
