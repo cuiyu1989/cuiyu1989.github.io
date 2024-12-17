@@ -274,6 +274,50 @@
             color: var(--secondary-color);
             font-size: 1.1em;
         }
+    .card-buttons {
+         display: flex;
+         gap: 10px;
+         margin-top: 15px;
+}
+
+.map-btn, .call-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+    font-weight: 500;
+    border: none;
+}
+
+.map-btn {
+    background: var(--success-color);
+    color: white;
+}
+
+.map-btn:hover {
+    background: var(--success-hover-color);
+}
+
+.call-btn {
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.call-btn:hover {
+    background: var(--secondary-color);
+}
+
+.phone-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
     </style>
 </head>
 <body>
@@ -470,7 +514,6 @@
         region: "busan"
     },
     {
-        
         id: "win",
         name: {
             ko: "윈펜싱클럽",
@@ -658,7 +701,9 @@ const translations = {
         phone: "전화",
         address: "주소",
         noResults: "검색 결과가 없습니다",
-        showingResults: "총 {count}개의 클럽"
+        showingResults: "총 {count}개의 클럽",
+        call: "전화하기",
+        viewMap: "위치보기"
     },
     cn: {
         title: "韩国重剑俱乐部",
@@ -670,7 +715,9 @@ const translations = {
         phone: "电话",
         address: "地址",
         noResults: "没有找到相关结果",
-        showingResults: "共找到 {count} 个俱乐部"
+        showingResults: "共找到 {count} 个俱乐部",
+        call: "拨打电话",
+        viewMap: "查看位置"
     },
     en: {
         title: "Korean Epee Clubs",
@@ -682,7 +729,9 @@ const translations = {
         phone: "Phone",
         address: "Address",
         noResults: "No results found",
-        showingResults: "Found {count} clubs"
+        showingResults: "Found {count} clubs",
+        call: "Call",
+        viewMap: "View Map"
     }
 };
 
@@ -786,25 +835,34 @@ class ClubManager {
     }
 
     createClubCard(club) {
-        return `
-            <div class="club-card">
-                <div class="club-name">${club.name[this.currentLang]}</div>
-                <div class="club-info">
-                    <div class="club-address">
-                        <strong>${translations[this.currentLang].address}:</strong> 
-                        ${club.address[this.currentLang]}
-                    </div>
-                    <div class="club-phone">
-                        <strong>${translations[this.currentLang].phone}:</strong> 
-                        ${club.phone}
-                    </div>
+    const phoneNumber = club.phone.replace(/-/g, '');
+    return `
+        <div class="club-card">
+            <div class="club-name">${club.name[this.currentLang]}</div>
+            <div class="club-info">
+                <div class="club-address">
+                    <strong>${translations[this.currentLang].address}:</strong> 
+                    ${club.address[this.currentLang]}
                 </div>
+                <div class="club-phone">
+                    <strong>${translations[this.currentLang].phone}:</strong> 
+                    ${club.phone}
+                </div>
+            </div>
+            <div class="card-buttons">
+                <a href="tel:${phoneNumber}" class="call-btn">
+                    <svg class="phone-icon" viewBox="0 0 24 24">
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.98.98 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                    </svg>
+                    ${translations[this.currentLang].call}
+                </a>
                 <button class="map-btn" onclick="clubManager.showMap('${club.id}')">
                     ${translations[this.currentLang].viewMap}
                 </button>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 
     showMap(clubId) {
         const club = clubs.find(c => c.id === clubId);
