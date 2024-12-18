@@ -924,46 +924,7 @@ class ClubManager {
     `;
 }
 
-    showMap(clubId) {
-        const club = clubs.find(c => c.id === clubId);
-        if (!club) return;
-
-        const modal = document.getElementById('mapModal');
-        modal.style.display = 'block';
-        
-        if (!this.map) {
-            this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
-                center: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
-                level: 3
-            });
-        }
-        
-        // 设置地图中心
-        this.map.setCenter(new kakao.maps.LatLng(club.coords.lat, club.coords.lng));
-
-        // 清除之前的标记
-        if (this.currentMarker) {
-            this.currentMarker.setMap(null);
-        }
-
-        // 添加新标记
-        this.currentMarker = new kakao.maps.Marker({
-            position: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
-            map: this.map
-        });
-
-        // 添加信息窗口
-        if (this.infoWindow) {
-            this.infoWindow.close();
-        }
-
-        this.infoWindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:10px;text-align:center;">${club.name[this.currentLang]}</div>`
-        });
-        this.infoWindow.open(this.map, this.currentMarker);
-    }
-
-    closeMap() {
+        closeMap() {
         const modal = document.getElementById('mapModal');
         modal.style.display = 'none';
         if (this.infoWindow) {
