@@ -865,55 +865,57 @@ class ClubManager {
         `;
     }
 
-    showMap(clubId) {
-        const club = clubs.find(c => c.id === clubId);
-        if (!club) return;
+   showMap(clubId) {
+    const club = clubs.find(c => c.id === clubId);
+    if (!club) return;
 
-        const modal = document.getElementById('mapModal');
-        modal.style.display = 'block';
+    const modal = document.getElementById('mapModal');
+    modal.style.display = 'block';
 
-        this.geocoder.addressSearch(club.address.ko, (result, status) => {
-            if (status === kakao.maps.services.Status.OK) {
-                const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    // 정확한 주소 검색을 위해 건물명이나 층수 정보를 제거
+    const searchAddress = club.address.ko.split(' ').slice(0, -1).join(' ');
 
-                if (!this.map) {
-                    this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
-                        center: coords,
-                        level: 3
-                    });
-                } else {
-                    this.map.setCenter(coords);
-                }
+    this.geocoder.addressSearch(searchAddress, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-                if (this.currentMarker) {
-                    this.currentMarker.setMap(null);
-                }
-
-                this.currentMarker = new kakao.maps.Marker({
-                    map: this.map,
-                    position: coords
+            if (!this.map) {
+                this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
+                    center: coords,
+                    level: 3
                 });
-
-                if (this.infoWindow) {
-                    this.infoWindow.close();
-                }
-
-                this.infoWindow = new kakao.maps.InfoWindow({
-                    content: `<div style="padding:10px;text-align:center;width:150px;">
-                                <strong>${club.name[this.currentLang]}</strong><br>
-                                <small>${club.phone}</small>
-                            </div>`
-                });
-                this.infoWindow.open(this.map, this.currentMarker);
-
-                this.map.setCenter(coords);
             } else {
-                console.error('주소 검색 실패:', club.address.ko);
-                alert('주소를 찾을 수 없습니다.');
+                this.map.setCenter(coords);
             }
-        });
-    }
 
+            if (this.currentMarker) {
+                this.currentMarker.setMap(null);
+            }
+
+            this.currentMarker = new kakao.maps.Marker({
+                map: this.map,
+                position: coords
+            });
+
+            if (this.infoWindow) {
+                this.infoWindow.close();
+            }
+
+            this.infoWindow = new kakao.maps.InfoWindow({
+                content: `<div style="padding:10px;text-align:center;width:150px;">
+                            <strong>${club.name[this.currentLang]}</strong><br>
+                            <small>${club.phone}</small>
+                        </div>`
+            });
+            this.infoWindow.open(this.map, this.currentMarker);
+
+            this.map.setCenter(coords);
+        } else {
+            console.error('주소 검색 실패:', searchAddress);
+            alert('주소를 찾을 수 없습니다.');
+        }
+    });
+}
     closeMap() {
         const modal = document.getElementById('mapModal');
         modal.style.display = 'none';
