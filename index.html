@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -373,8 +374,8 @@
         id: "beable",
         name: {
             ko: "비에이블펜싱클럽",
-            cn: "BEABLE击剑俱乐部",
-            en: "BEABLE Fencing Club"
+            cn: "BE ABLE击剑俱乐部",
+            en: "BE ABLE Fencing Club"
         },
         address: {
             ko: "서울 강동구 아리수로93나길 76 501호",
@@ -775,7 +776,6 @@ class ClubManager {
         this.map = null;
         this.currentMarker = null;
         this.infoWindow = null;
-        this.geocoder = new kakao.maps.services.Geocoder();
         this.initializeUI();
         this.addEventListeners();
     }
@@ -836,86 +836,74 @@ class ClubManager {
     }
 
     createClubCard(club) {
-        const phoneNumber = club.phone.replace(/-/g, '');
-        return `
-            <div class="club-card">
-                <div class="club-name">${club.name[this.currentLang]}</div>
-                <div class="club-info">
-                    <div class="club-address">
-                        <strong>${translations[this.currentLang].address}:</strong> 
-                        ${club.address[this.currentLang]}
-                    </div>
-                    <div class="club-phone">
-                        <strong>${translations[this.currentLang].phone}:</strong> 
-                        ${club.phone}
-                    </div>
+    const phoneNumber = club.phone.replace(/-/g, '');
+    return `
+        <div class="club-card">
+            <div class="club-name">${club.name[this.currentLang]}</div>
+            <div class="club-info">
+                <div class="club-address">
+                    <strong>${translations[this.currentLang].address}:</strong> 
+                    ${club.address[this.currentLang]}
                 </div>
-                <div class="card-buttons">
-                    <a href="tel:${phoneNumber}" class="call-btn">
-                        <svg class="phone-icon" viewBox="0 0 24 24">
-                            <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.98.98 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
-                        </svg>
-                        ${translations[this.currentLang].call}
-                    </a>
-                    <button class="map-btn" onclick="clubManager.showMap('${club.id}')">
-                        ${translations[this.currentLang].viewMap}
-                    </button>
+                <div class="club-phone">
+                    <strong>${translations[this.currentLang].phone}:</strong> 
+                    ${club.phone}
                 </div>
             </div>
-        `;
+            <div class="card-buttons">
+                <a href="tel:${phoneNumber}" class="call-btn">
+                    <svg class="phone-icon" viewBox="0 0 24 24">
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.98.98 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                    </svg>
+                    ${translations[this.currentLang].call}
+                </a>
+                <button class="map-btn" onclick="clubManager.showMap('${club.id}')">
+                    ${translations[this.currentLang].viewMap}
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+    showMap(clubId) {
+        const club = clubs.find(c => c.id === clubId);
+        if (!club) return;
+
+        const modal = document.getElementById('mapModal');
+        modal.style.display = 'block';
+        
+        if (!this.map) {
+            this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
+                center: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
+                level: 3
+            });
+        }
+        
+        // 设置地图中心
+        this.map.setCenter(new kakao.maps.LatLng(club.coords.lat, club.coords.lng));
+
+        // 清除之前的标记
+        if (this.currentMarker) {
+            this.currentMarker.setMap(null);
+        }
+
+        // 添加新标记
+        this.currentMarker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(club.coords.lat, club.coords.lng),
+            map: this.map
+        });
+
+        // 添加信息窗口
+        if (this.infoWindow) {
+            this.infoWindow.close();
+        }
+
+        this.infoWindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:10px;text-align:center;">${club.name[this.currentLang]}</div>`
+        });
+        this.infoWindow.open(this.map, this.currentMarker);
     }
 
-   showMap(clubId) {
-    const club = clubs.find(c => c.id === clubId);
-    if (!club) return;
-
-    const modal = document.getElementById('mapModal');
-    modal.style.display = 'block';
-
-    // 정확한 주소 검색을 위해 건물명이나 층수 정보를 제거
-    const searchAddress = club.address.ko.split(' ').slice(0, -1).join(' ');
-
-    this.geocoder.addressSearch(searchAddress, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-            if (!this.map) {
-                this.map = new kakao.maps.Map(document.getElementById('kakaoMap'), {
-                    center: coords,
-                    level: 3
-                });
-            } else {
-                this.map.setCenter(coords);
-            }
-
-            if (this.currentMarker) {
-                this.currentMarker.setMap(null);
-            }
-
-            this.currentMarker = new kakao.maps.Marker({
-                map: this.map,
-                position: coords
-            });
-
-            if (this.infoWindow) {
-                this.infoWindow.close();
-            }
-
-            this.infoWindow = new kakao.maps.InfoWindow({
-                content: `<div style="padding:10px;text-align:center;width:150px;">
-                            <strong>${club.name[this.currentLang]}</strong><br>
-                            <small>${club.phone}</small>
-                        </div>`
-            });
-            this.infoWindow.open(this.map, this.currentMarker);
-
-            this.map.setCenter(coords);
-        } else {
-            console.error('주소 검색 실패:', searchAddress);
-            alert('주소를 찾을 수 없습니다.');
-        }
-    });
-}
     closeMap() {
         const modal = document.getElementById('mapModal');
         modal.style.display = 'none';
@@ -942,6 +930,7 @@ class ClubManager {
     }
 
     addEventListeners() {
+        // 语言切换
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 this.currentLang = btn.dataset.lang;
@@ -951,10 +940,14 @@ class ClubManager {
             });
         });
 
+        // 搜索和筛选
         document.querySelector('.search-box').addEventListener('input', () => this.filterClubs());
         document.querySelector('.region-select').addEventListener('change', () => this.filterClubs());
+
+        // 关闭地图
         document.querySelector('.close-btn').addEventListener('click', () => this.closeMap());
-        
+
+        // ESC键关闭地图
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeMap();
@@ -962,8 +955,7 @@ class ClubManager {
         });
     }
 }
-
-const clubManager = new ClubManager();
+        const clubManager = new ClubManager();
      </script>
 </body>
 </html>
