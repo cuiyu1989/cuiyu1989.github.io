@@ -320,148 +320,7 @@
 }
     </style>
 </head>
-// 配置信息
-const clubConfig = {
-  name: "首尔击剑俱乐部",
-  theme: "#1a365d",
-  responses: {
-    ko: {
-      welcome: '안녕하세요! 저희 펜싱 클럽에 오신 것을 환영합니다.',
-      quickReplies: ['수업 안내', '체험 수업', '위치', '연락처'],
-      lessons: {
-        title: '수업 프로그램',
-        content: '• 체험 수업: 50,000원\n• 정규반: 320,000원/월'
-      },
-      location: '서울시 강남구 XX동 123번지',
-      contact: '전화: 02-XXX-XXXX\n카카오톡: fencingclub'
-    },
-    en: {
-      welcome: 'Welcome to our fencing club!',
-      quickReplies: ['Classes', 'Trial Lesson', 'Location', 'Contact'],
-      lessons: {
-        title: 'Class Programs',
-        content: '• Trial Class: 50,000 won\n• Regular Course: 320,000 won/month'
-      },
-      location: 'XX-dong 123, Gangnam-gu, Seoul',
-      contact: 'Phone: 02-XXX-XXXX\nKakaoTalk: fencingclub'
-    },
-    zh: {
-      welcome: '欢迎来到我们的击剑俱乐部！',
-      quickReplies: ['课程介绍', '体验课', '位置', '联系方式'],
-      lessons: {
-        title: '课程项目',
-        content: '• 体验课: 50,000韩元\n• 常规班: 320,000韩元/月'
-      },
-      location: '首尔市江南区XX洞123号',
-      contact: '电话: 02-XXX-XXXX\nKakaoTalk: fencingclub'
-    }
-  }
-};
-
-// 初始化聊天功能
-document.addEventListener('DOMContentLoaded', () => {
-  const chatToggle = document.getElementById('chat-toggle');
-  const chatContainer = document.getElementById('chat-container');
-  const chatClose = document.getElementById('chat-close');
-  const chatMessages = document.getElementById('chat-messages');
-  const userInput = document.getElementById('user-input');
-  const sendButton = document.getElementById('send-button');
-  const languageSelect = document.getElementById('language-select');
-  const quickReplies = document.getElementById('quick-replies');
-
-  // 更新快速回复按钮
-  function updateQuickReplies() {
-    const lang = languageSelect.value;
-    quickReplies.innerHTML = '';
-    clubConfig.responses[lang].quickReplies.forEach(reply => {
-      const button = document.createElement('button');
-      button.className = 'quick-reply-btn';
-      button.textContent = reply;
-      button.addEventListener('click', () => {
-        addMessage(reply, 'user');
-        processMessage(reply);
-      });
-      quickReplies.appendChild(button);
-    });
-  }
-
-  // 显示欢迎消息
-  function showWelcomeMessage() {
-    const lang = languageSelect.value;
-    addMessage(clubConfig.responses[lang].welcome, 'bot');
-    updateQuickReplies();
-  }
-
-  // 切换聊天窗口显示
-  chatToggle.addEventListener('click', () => {
-    chatContainer.classList.remove('hidden');
-    chatToggle.classList.add('hidden');
-    if (chatMessages.children.length === 0) {
-      showWelcomeMessage();
-    }
-  });
-
-  chatClose.addEventListener('click', () => {
-    chatContainer.classList.add('hidden');
-    chatToggle.classList.remove('hidden');
-  });
-
-  // 发送消息
-  function sendMessage() {
-    const message = userInput.value.trim();
-    if (message) {
-      addMessage(message, 'user');
-      processMessage(message);
-      userInput.value = '';
-    }
-  }
-
-  sendButton.addEventListener('click', sendMessage);
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      sendMessage();
-    }
-  });
-
-  // 添加消息到聊天窗口
-  function addMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', `${sender}-message`);
-    messageDiv.textContent = text;
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  // 处理消息回复
-  function processMessage(message) {
-    const lang = languageSelect.value;
-    const data = clubConfig.responses[lang];
-    const lowerMessage = message.toLowerCase();
-    let response = '';
-
-    if (lowerMessage.includes('수업') || lowerMessage.includes('class') || lowerMessage.includes('课')) {
-      response = `${data.lessons.title}\n${data.lessons.content}`;
-    } else if (lowerMessage.includes('위치') || lowerMessage.includes('location') || lowerMessage.includes('位置')) {
-      response = data.location;
-    } else if (lowerMessage.includes('연락') || lowerMessage.includes('contact') || lowerMessage.includes('联系')) {
-      response = data.contact;
-    } else {
-      response = data.contact;
-    }
-
-    setTimeout(() => {
-      addMessage(response, 'bot');
-    }, 500);
-  }
-
-  // 语言切换
-  languageSelect.addEventListener('change', () => {
-    chatMessages.innerHTML = '';
-    showWelcomeMessage();
-  });
-});
-</script>
-    <body>
+<body>    
     <div class="language-switch">
         <button class="lang-btn active" data-lang="ko">한국어</button>
         <button class="lang-btn" data-lang="cn">中文</button>
@@ -491,6 +350,223 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="close-btn translate" data-key="close">Close</button>
         </div>
     </div>
+    <!-- Chat Widget -->
+    <div id="chat-widget" class="chat-widget">
+      <button id="chat-toggle" class="chat-toggle">
+        <span>⚔️</span>
+      </button>
+      <div id="chat-container" class="chat-container hidden">
+        <div class="chat-header">
+          <div class="chat-title">击剑俱乐部咨询</div>
+          <div class="language-selector">
+            <select id="language-select">
+              <option value="ko">한국어</option>
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+          <button id="chat-close">×</button>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div id="quick-replies" class="quick-replies"></div>
+        <div class="chat-input">
+          <input type="text" id="user-input" placeholder="请输入您的问题...">
+          <button id="send-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+     <!-- Chat Widget -->
+    <div id="chat-widget" class="chat-widget">
+      <button id="chat-toggle" class="chat-toggle">
+        <span>⚔️</span>
+      </button>
+      <div id="chat-container" class="chat-container hidden">
+        <div class="chat-header">
+          <div class="chat-title">击剑俱乐部咨询</div>
+          <div class="language-selector">
+            <select id="language-select">
+              <option value="ko">한국어</option>
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </select>
+          </div>
+          <button id="chat-close">×</button>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div id="quick-replies" class="quick-replies"></div>
+        <div class="chat-input">
+          <input type="text" id="user-input" placeholder="请输入您的问题...">
+          <button id="send-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <style>
+    /* 聊天组件样式 */
+    .chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .chat-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #1a365d;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.05);
+      background: #2c5282;
+    }
+
+    .chat-container {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 350px;
+      height: 500px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: #1a365d;
+      color: white;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+
+    .message {
+      margin: 8px 0;
+      padding: 10px 14px;
+      border-radius: 15px;
+      max-width: 85%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .user-message {
+      background: #1a365d;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 5px;
+    }
+
+    .bot-message {
+      background: white;
+      color: #2d3748;
+      margin-right: auto;
+      border-bottom-left-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .quick-replies {
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #f8fafc;
+    }
+
+    .quick-reply-btn {
+      padding: 6px 12px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-reply-btn:hover {
+      background: #1a365d;
+      color: white;
+    }
+
+    .chat-input {
+      padding: 15px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: #1a365d;
+    }
+
+    .chat-input button {
+      padding: 8px;
+      background: #1a365d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-input button:hover {
+      background: #2c5282;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .chat-container {
+        width: calc(100% - 40px);
+        height: calc(100vh - 120px);
+        bottom: 80px;
+      }
+    }
+    </style>
     <script>
         // 俱乐部数据
         const clubs = [
@@ -1103,9 +1179,9 @@ class ClubManager {
         });
     }
 }
-
+ </script>
 const clubManager = new ClubManager();
-     </script>
+ </script>
         <!-- Chat Widget -->
 <div id="chat-widget" class="chat-widget">
   <button id="chat-toggle" class="chat-toggle">
@@ -1303,5 +1379,138 @@ const clubManager = new ClubManager();
 }
 </style>
     <script>
+const clubConfig = {
+  name: "首尔击剑俱乐部",
+  theme: "#1a365d",
+  responses: {
+    ko: {
+      welcome: '안녕하세요! 저희 펜싱 클럽에 오신 것을 환영합니다.',
+      quickReplies: ['수업 안내', '체험 수업', '위치', '연락처'],
+      lessons: {
+        title: '수업 프로그램',
+        content: '• 체험 수업: 50,000원\n• 정규반: 320,000원/월'
+      },
+      location: '서울시 강남구 XX동 123번지',
+      contact: '전화: 02-XXX-XXXX\n카카오톡: fencingclub'
+    },
+    en: {
+      welcome: 'Welcome to our fencing club!',
+      quickReplies: ['Classes', 'Trial Lesson', 'Location', 'Contact'],
+      lessons: {
+        title: 'Class Programs',
+        content: '• Trial Class: 50,000 won\n• Regular Course: 320,000 won/month'
+      },
+      location: 'XX-dong 123, Gangnam-gu, Seoul',
+      contact: 'Phone: 02-XXX-XXXX\nKakaoTalk: fencingclub'
+    },
+    zh: {
+      welcome: '欢迎来到我们的击剑俱乐部！',
+      quickReplies: ['课程介绍', '体验课', '位置', '联系方式'],
+      lessons: {
+        title: '课程项目',
+        content: '• 体验课: 50,000韩元\n• 常规班: 320,000韩元/月'
+      },
+      location: '首尔市江南区XX洞123号',
+      contact: '电话: 02-XXX-XXXX\nKakaoTalk: fencingclub'
+    }
+  }
+};
+
+// 初始化聊天功能
+document.addEventListener('DOMContentLoaded', () => {
+  const chatToggle = document.getElementById('chat-toggle');
+  const chatContainer = document.getElementById('chat-container');
+  const chatClose = document.getElementById('chat-close');
+  const chatMessages = document.getElementById('chat-messages');
+  const userInput = document.getElementById('user-input');
+  const sendButton = document.getElementById('send-button');
+  const languageSelect = document.getElementById('language-select');
+  const quickReplies = document.getElementById('quick-replies');
+
+  function updateQuickReplies() {
+    const lang = languageSelect.value;
+    quickReplies.innerHTML = '';
+    clubConfig.responses[lang].quickReplies.forEach(reply => {
+      const button = document.createElement('button');
+      button.className = 'quick-reply-btn';
+      button.textContent = reply;
+      button.addEventListener('click', () => {
+        addMessage(reply, 'user');
+        processMessage(reply);
+      });
+      quickReplies.appendChild(button);
+    });
+  }
+
+  function showWelcomeMessage() {
+    const lang = languageSelect.value;
+    addMessage(clubConfig.responses[lang].welcome, 'bot');
+    updateQuickReplies();
+  }
+
+  chatToggle.addEventListener('click', () => {
+    chatContainer.classList.remove('hidden');
+    chatToggle.classList.add('hidden');
+    if (chatMessages.children.length === 0) {
+      showWelcomeMessage();
+    }
+  });
+
+  chatClose.addEventListener('click', () => {
+    chatContainer.classList.add('hidden');
+    chatToggle.classList.remove('hidden');
+  });
+
+  function sendMessage() {
+    const message = userInput.value.trim();
+    if (message) {
+      addMessage(message, 'user');
+      processMessage(message);
+      userInput.value = '';
+    }
+  }
+
+  sendButton.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  function addMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', `${sender}-message`);
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function processMessage(message) {
+    const lang = languageSelect.value;
+    const data = clubConfig.responses[lang];
+    const lowerMessage = message.toLowerCase();
+    let response = '';
+
+    if (lowerMessage.includes('수업') || lowerMessage.includes('class') || lowerMessage.includes('课')) {
+      response = `${data.lessons.title}\n${data.lessons.content}`;
+    } else if (lowerMessage.includes('위치') || lowerMessage.includes('location') || lowerMessage.includes('位置')) {
+      response = data.location;
+    } else if (lowerMessage.includes('연락') || lowerMessage.includes('contact') || lowerMessage.includes('联系')) {
+      response = data.contact;
+    } else {
+      response = data.contact;
+    }
+
+    setTimeout(() => {
+      addMessage(response, 'bot');
+    }, 500);
+  }
+
+  languageSelect.addEventListener('change', () => {
+    chatMessages.innerHTML = '';
+    showWelcomeMessage();
+  });
+});
+</script>
 </body>
 </html>
